@@ -14,10 +14,10 @@ class LinearRegression:
         self.weights = np.zeros(n_features)
         self.b = 0
         for i in range(epochs):
-            # np.random.shuffle(self.X)
             for j in self.get_batches(self.X, self.batch_size):
                 y_pred = self.weights @ self.X[j].T + self.b
-                print(X[j])
+                # print(X[j])
+                # print(j)
                 cost = y_pred - self.y[j]
                 self.weights -= (lr / n_samples) * self.X[j].T @ cost
                 self.b -= (lr / n_samples) * np.sum(cost)

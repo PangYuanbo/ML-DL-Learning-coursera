@@ -12,7 +12,9 @@ def z_score_normalize(X):
     X_standardized = (X - X_mean) / X_std
     return X_standardized
 
-
+a=np.array([[2,1],[1,3]])
+c=np.dot(a,a)
+print(c)
 df = pd.read_csv('boston.csv')
 np_df = np.array(df)
 np_value = np_df[:, 13]
