@@ -21,6 +21,8 @@ class LinearRegression:
                 cost = y_pred - self.y[j]
                 self.weights -= (lr / n_samples) * self.X[j].T @ cost
                 self.b -= (lr / n_samples) * np.sum(cost)
+            if i % 100 == 0:
+                print(f'Epoch {i}, Cost: {np.mean(cost)}')
 
     def get_batches(self, X, batch_size=32):
         self.batch_size = batch_size
