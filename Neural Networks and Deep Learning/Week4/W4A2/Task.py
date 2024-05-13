@@ -9,7 +9,7 @@ from scipy import ndimage
 from dnn_app_utils_v3 import *
 from public_tests import *
 
-plt.rcParams['figure.figsize'] = (5.0, 4.0) # set default size of plots
+plt.rcParams['figure.figsize'] = (5.0, 4.0) # set default size of plots11
 plt.rcParams['image.interpolation'] = 'nearest'
 plt.rcParams['image.cmap'] = 'gray'
 
