@@ -21,6 +21,16 @@ class ReadMNIST(object):
             if magic!=2051:
                 raise ValueError('Magic number mismatch, expected 2051 but got {}'.format(magic))
             image_data=array('B',file.read())
+        images=[]
+        for i in range(size):
+            images.append([0]*rows*cols)
+        for i in range(size):
+            images[i][:]=np.array(image_data[i*rows*cols:(i+1)*rows*cols]).reshape(rows,cols)
+        return images,labels
+    def load_data(self):
+        x_train,y_train=self.read_images_labels(self.train_images_filepath,self.train_labels_filepath)
+        x_test,y_test=self.read_images_labels(self.test_images_filepath,self.test_labels_filepath)
+        return (x_train,y_train),(x_test,y_test)
 
 
 
