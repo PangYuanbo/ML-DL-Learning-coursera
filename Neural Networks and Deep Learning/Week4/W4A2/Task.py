@@ -247,7 +247,7 @@ print_mislabeled_images(classes, test_x, test_y, pred_test)
 ## START CODE HERE ##
 my_image = "my_image.jpg" # change this to the name of your image file
 my_label_y = [1] # the true class of your image (1 -> cat, 0 -> non-cat)
-## END CODE HERE ##
+## END CODE HERE  ##
 
 fname = "images/" + my_image
 image = np.array(Image.open(fname).resize((num_px, num_px)))
