@@ -33,6 +33,10 @@ class model(object):
         dZ[Z <= 0] = 0
         return dZ
 
+    def softmax(self, Z):
+        expZ = np.exp(Z - np.max(Z))
+        return expZ / expZ.sum(axis=0, keepdims=True)
+
     def tanh_backward(self, dA, Z):
         return dA * (1 - np.power(np.tanh(Z), 2))
 
@@ -49,6 +53,8 @@ class model(object):
             A = self.relu(Z)
         elif activation == "tanh":
             A = self.tanh(Z)
+        elif activation == "softmax":
+            A=self.softmax(Z)
         cache = (linear_cache, Z)
         return A, cache
 
@@ -57,6 +63,15 @@ class model(object):
         A = X
         for l in range(1, self.L):
             A_prev = A
-            A, cache = self.linear_activation_forward(*self.linear_forward(A_prev, self.parameters['W' + str(l)], self.parameters['b' + str(l)]), "relu")
+            A, cache = self.linear_activation_forward(self.parameters['W' + str(l)], self.parameters['b' + str(l)], "relu")
             caches.append(cache)
+        AL, cache = self.linear_activation_forward(self.parameters['W' + str(self.L)], self.parameters['b' + str(self.L)], "softmax")
+        caches.append(cache)
+        return AL, caches
+
+    def compute_cost(self, AL, Y):
+        m = Y.shape[1]
+        cost = -1 / m * np.sum(Y * np.log(AL))
+        cost = np.squeeze(cost)
+        return cost
 
