@@ -35,3 +35,7 @@ class ReadMNIST(object):
         x_train, y_train = self.read_images_labels(self.train_images_filepath, self.train_labels_filepath)
         x_test, y_test = self.read_images_labels(self.test_images_filepath, self.test_labels_filepath)
         return (x_train, y_train), (x_test, y_test)
+
+    def np_change(self, x):
+        np_x = np.array(x)
+        np_x= np_x.reshape(np_x.shape[0],-1).T

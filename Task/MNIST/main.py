@@ -41,6 +41,9 @@ Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
                  test_images_filepath='Data/t10k-images.idx3-ubyte', test_labels_filepath='Data/t10k-labels.idx1-ubyte')
 (x_train, y_train), (x_test, y_test) = Data.load_data()
 
+
+
+print('x_train shape:', np_x_train.shape)
 #
 # Show some random training and test images
 #
