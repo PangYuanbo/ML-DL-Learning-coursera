@@ -39,3 +39,8 @@ class ReadMNIST(object):
     def np_change(self, x):
         np_x = np.array(x)
         np_x= np_x.reshape(np_x.shape[0],-1).T
+
+    def OneHot(self, y):
+        onehot = np.zeros((y.max() + 1, y.size))
+        onehot[y, np.arange(y.size)] = 1
+        return onehot
