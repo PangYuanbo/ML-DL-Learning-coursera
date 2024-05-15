@@ -33,14 +33,21 @@ class ReadMNIST(object):
 
     def load_data(self):
         x_train, y_train = self.read_images_labels(self.train_images_filepath, self.train_labels_filepath)
+        x_train=self.np_change(x_train)
+        y_train=self.OneHot(y_train)
         x_test, y_test = self.read_images_labels(self.test_images_filepath, self.test_labels_filepath)
+        x_test=self.np_change(x_test)
+        y_test=self.OneHot(y_test)
         return (x_train, y_train), (x_test, y_test)
 
     def np_change(self, x):
         np_x = np.array(x)
         np_x= np_x.reshape(np_x.shape[0],-1).T
+        np_x = np_x/255
+        return np_x
 
     def OneHot(self, y):
+        y=np.array(y)
         onehot = np.zeros((y.max() + 1, y.size))
         onehot[y, np.arange(y.size)] = 1
         return onehot

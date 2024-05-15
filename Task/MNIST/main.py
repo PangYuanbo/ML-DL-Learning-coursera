@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import random
+from Regression import Model
 
 Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
                  train_labels_filepath='Data/train-labels.idx1-ubyte',
@@ -41,23 +42,24 @@ Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
                  test_images_filepath='Data/t10k-images.idx3-ubyte', test_labels_filepath='Data/t10k-labels.idx1-ubyte')
 (x_train, y_train), (x_test, y_test) = Data.load_data()
 
-
-
-print('x_train shape:', np_x_train.shape)
 #
 # Show some random training and test images
 #
-images_2_show = []
-titles_2_show = []
-for i in range(0, 10):
-    r = random.randint(1, 60000)
-    images_2_show.append(x_train[r])
-    titles_2_show.append('training image [' + str(r) + '] = ' + str(y_train[r]))
+# images_2_show = []
+# titles_2_show = []
+# for i in range(0, 10):
+#     r = random.randint(1, 60000)
+#     images_2_show.append(x_train[r])
+#     titles_2_show.append('training image [' + str(r) + '] = ' + str(y_train[r]))
+#
+# for i in range(0, 5):
+#     r = random.randint(1, 10000)
+#     images_2_show.append(x_test[r])
+#     titles_2_show.append('test image [' + str(r) + '] = ' + str(y_test[r]))
+#
+# show_images(images_2_show, titles_2_show)
 
-for i in range(0, 5):
-    r = random.randint(1, 10000)
-    images_2_show.append(x_test[r])
-    titles_2_show.append('test image [' + str(r) + '] = ' + str(y_test[r]))
-
-show_images(images_2_show, titles_2_show)
-
+# loading model
+layers_dims = [784, 128, 64, 10]
+model = Model([784, 128, 64, 10])
+model.fit(x_train, y_train, learning_rate=0.1, num_iterations=1000, print_cost=True)

@@ -35,6 +35,24 @@ def relu_backward(dA, Z):
 def softmax(Z):
     expZ = np.exp(Z - np.max(Z))
     return expZ / expZ.sum(axis=0, keepdims=True)
+def softmax_backward(dA, Z):
+    """
+    Backward propagation for a single softmax layer.
+
+    Arguments:
+    dA -- Gradient of the loss with respect to the output of the softmax layer
+    Z -- The input to the softmax layer (pre-activation values)
+
+    Returns:
+    dZ -- Gradient of the loss with respect to the input of the softmax layer
+    """
+    expZ = np.exp(Z - np.max(Z, axis=0, keepdims=True))
+    softmax = expZ / expZ.sum(axis=0, keepdims=True)
+
+    # Compute the gradient dZ
+    dZ = softmax * (dA - np.sum(dA * softmax, axis=0, keepdims=True))
+
+    return dZ
 
 
 def tanh_backward(dA, Z):
@@ -47,8 +65,8 @@ def linear_forward(A, W, b):
     return Z, cache
 
 
-def linear_activation_forward(W, b, activation):
-    Z, linear_cache = linear_forward(W, b)
+def linear_activation_forward(A_prev,W, b, activation):
+    Z, linear_cache = linear_forward(A_prev,W, b)
     if activation == "sigmoid":
         A = sigmoid(Z)
     elif activation == "relu":
@@ -57,6 +75,8 @@ def linear_activation_forward(W, b, activation):
         A = tanh(Z)
     elif activation == "softmax":
         A= softmax(Z)
+    else:
+        A = Z
     cache = (linear_cache, Z)
     return A, cache
 
@@ -77,13 +97,17 @@ def linear_activation_backward(dA, cache, activation):
         dZ = relu_backward(dA, Z)
     elif activation == "tanh":
         dZ = tanh_backward(dA, Z)
+    elif activation=="softmax":
+        dZ=softmax_backward(dA,Z)
+    else:
+        dZ=Z
     dA_prev, dW, db = linear_backward(dZ, linear_cache)
     return dA_prev, dW, db
 
 class Model(object):
     def __init__(self, layers_dims):
         self.parameters = {}
-        self.costs = None
+        self.costs = []
         self.layers_dims = layers_dims
         self.L = len(layers_dims)
 
@@ -96,11 +120,12 @@ class Model(object):
     def L_model_forward(self, X):
         caches=[]
         A = X
-        for l in range(1, self.L):
+        for l in range(1, self.L-1):
             A_prev = A
-            A, cache = linear_activation_forward(self.parameters['W' + str(l)], self.parameters['b' + str(l)], "relu")
+            A, cache = linear_activation_forward(A_prev,self.parameters['W' + str(l)], self.parameters['b' + str(l)], "relu")
             caches.append(cache)
-        AL, cache = linear_activation_forward(self.parameters['W' + str(self.L)], self.parameters['b' + str(self.L)], "softmax")
+        A_prev = A
+        AL, cache = linear_activation_forward(A_prev,self.parameters['W' + str(self.L-1)], self.parameters['b' + str(self.L-1)], "softmax")
         caches.append(cache)
         return AL, caches
 
@@ -111,12 +136,13 @@ class Model(object):
         Y = Y.reshape(AL.shape)
         dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
         current_cache = caches[L-1]
-        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(dAL, current_cache, "softmax")
+        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(dAL, current_cache,"softmax" )
         grads["dW" + str(L)] = dW_temp
         grads["db" + str(L)] = db_temp
+        dZ=dA_prev_temp
         for i in reversed(range(L-1)):
             current_cache = caches[i]
-            dAL, dW_temp, db_temp = linear_activation_backward(dAL, current_cache, "relu")
+            dZ, dW_temp, db_temp = linear_activation_backward(dZ, current_cache, "relu")
             grads["dW" + str(i + 1)] = dW_temp
             grads["db" + str(i + 1)] = db_temp
         return grads
@@ -133,10 +159,13 @@ class Model(object):
             cost = compute_cost(AL, Y)
             grads = self.L_model_backward(AL, Y, caches)
             self.update_parameters(grads, learning_rate)
+            print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
             if print_cost and i % 100 == 0:
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
             if i % 100 == 0:
                 self.costs.append(cost)
+
+    def pre
 
 
 
