@@ -1,6 +1,6 @@
 from DataReader import ReadMNIST
 import time
-from GPU_natural import Model
+from Regression import Model
 
 Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
                  train_labels_filepath='Data/train-labels.idx1-ubyte',
