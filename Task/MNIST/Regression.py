@@ -1,6 +1,6 @@
 # the model for MNIST regression task
 import numpy as np
-
+import pickle
 
 def compute_cost(AL, Y):
     m = Y.shape[1]
@@ -165,7 +165,31 @@ class Model(object):
             if i % 100 == 0:
                 self.costs.append(cost)
 
-    def pre
+    def predict_cost(self,X,Y):
+        AL, caches = self.L_model_forward(X)
+        cost = compute_cost(AL, Y)
+        print("Cost after iteration {}: {}".format(10000, np.squeeze(cost)))
 
+    def predict(self, X):
+        # 使用模型参数进行前向传播并返回预测结果
+        AL, _ = self.L_model_forward(X)
+        # 对每个样本，选择概率最大的类别
+        predictions = np.argmax(AL, axis=1)
+        return predictions
+
+    def accuracy(self, X, Y):
+        predictions = self.predict(X)
+        # 将OneHot编码的实际结果转换为类别标签
+        labels = np.argmax(Y, axis=1)
+        accuracy = np.mean(predictions == labels)
+        return accuracy
+
+    def save_parameters(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self.parameters, file)
+
+    def load_parameters(self, filename):
+        with open(filename, 'rb') as file:
+            self.parameters = pickle.load(file)
 
 

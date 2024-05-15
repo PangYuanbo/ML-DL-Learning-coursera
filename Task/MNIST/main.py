@@ -1,8 +1,5 @@
 from DataReader import ReadMNIST
-import numpy as np
 import matplotlib.pyplot as plt
-import os
-import random
 from Regression import Model
 
 Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
@@ -63,3 +60,5 @@ Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
 layers_dims = [784, 128, 64, 10]
 model = Model([784, 128, 64, 10])
 model.fit(x_train, y_train, learning_rate=0.1, num_iterations=1000, print_cost=True)
+model.save_parameters('model.pkl')
+model.predict(x_test,y_test)
