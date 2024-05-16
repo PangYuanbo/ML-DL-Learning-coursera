@@ -146,7 +146,6 @@ class Model(object):
             self.costs.append(cost)
             grads = self.L_model_backward(AL, Y, caches)
             self.update_parameters(grads, learning_rate)
-            print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
             if print_cost and i % 100 == 0:
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
         return self.costs

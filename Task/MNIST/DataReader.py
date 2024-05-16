@@ -1,5 +1,7 @@
 # This the class to reader the MNIST data
 import platform
+
+
 if platform.system() == 'Windows':
     import cupy as np
 elif platform.system() == 'Linux':
