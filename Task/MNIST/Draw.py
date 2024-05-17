@@ -1,35 +1,42 @@
-import matplotlib.pyplot as plt
-import pandas as pd
 import os
+import glob
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# Directory containing the CSV files
-directory = '/mnt/data'
+# 获取当前脚本所在的目录
+directory = os.path.dirname(os.path.abspath(__file__))
 
-# Get a list of all CSV files in the directory
-csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+# 列出当前目录下所有的CSV文件
+csv_files = glob.glob(os.path.join(directory, '*.csv'))
 
-# Sort the files to ensure they are in the correct order
-csv_files.sort()
+# 确保输出目录存在
+output_directory = os.path.join(directory, 'plots')
+os.makedirs(output_directory, exist_ok=True)
 
-# Create subplots
-fig, axes = plt.subplots(nrows=6, ncols=5, figsize=(20, 24))
-axes = axes.flatten()
+# 遍历每个CSV文件并绘制数据
+for csv_file in csv_files:
+    try:
+        # 读取CSV文件
+        data = pd.read_csv(csv_file)
 
-# Iterate through the CSV files and plot the cost functions
-for i, csv_file in enumerate(csv_files):
-    # Read the CSV file
-    file_path = os.path.join(directory, csv_file)
-    df = pd.read_csv(file_path, header=None)
-
-    # Extract the cost values
-    cost_values = df[1]
-
-    # Plot the cost values
-    axes[i].plot(cost_values)
-    axes[i].set_title(csv_file)
-    axes[i].set_xlabel('Iteration')
-    axes[i].set_ylabel('Cost')
-
-# Adjust layout
-plt.tight_layout()
-plt.show()
+        # 检查数据是否包含预期的列
+        if 'Iteration' in data.columns and 'Cost' in data.columns:
+            # 创建一个新的图表
+            plt.figure(figsize=(10, 6))
+            # 绘制数据
+            plt.plot(data['Iteration'], data['Cost'])
+            # 设置图表标题和标签
+            plt.title(os.path.basename(csv_file))
+            plt.xlabel('Iteration')
+            plt.ylabel('Cost')
+            plt.grid(True)
+            # 保存图表为文件
+            plot_filename = os.path.join(output_directory, f"{os.path.splitext(os.path.basename(csv_file))[0]}.png")
+            plt.savefig(plot_filename)
+            print(f"Plot saved as {plot_filename}")
+            # 关闭图表以释放资源
+            plt.close()
+        else:
+            print(f"File {csv_file} does not contain the expected columns.")
+    except Exception as e:
+        print(f"Error processing file {csv_file}: {e}")

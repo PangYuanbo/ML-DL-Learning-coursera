@@ -37,14 +37,29 @@ class ReadMNIST(object):
         images = np.array(image_data).reshape(size, rows, cols)
         return images, labels
 
-    def load_data(self):
+    def load_data(self,):
+        # x_train, y_train = self.read_images_labels(self.train_images_filepath, self.train_labels_filepath)
+        # x_train = self.np_change(x_train)
+        # y_train = self.OneHot(y_train)
+        # x_test, y_test = self.read_images_labels(self.test_images_filepath, self.test_labels_filepath)
+        # x_test = self.np_change(x_test)
+        # y_test = self.OneHot(y_test)
+        # return (x_train, y_train), (x_test, y_test)
         x_train, y_train = self.read_images_labels(self.train_images_filepath, self.train_labels_filepath)
         x_train = self.np_change(x_train)
         y_train = self.OneHot(y_train)
         x_test, y_test = self.read_images_labels(self.test_images_filepath, self.test_labels_filepath)
         x_test = self.np_change(x_test)
         y_test = self.OneHot(y_test)
-        return (x_train, y_train), (x_test, y_test)
+
+        # 复制训练数据和测试数据中的每个样本3遍
+        x_train = np.repeat(x_train, 3, axis=0)
+        y_train = np.repeat(y_train, 3, axis=0)
+        x_test = np.repeat(x_test, 3, axis=0)
+        y_test = np.repeat(y_test, 3, axis=0)
+
+        data = (x_train, y_train), (x_test, y_test)
+        return data
 
     def np_change(self, x):
         np_x = np.array(x)
