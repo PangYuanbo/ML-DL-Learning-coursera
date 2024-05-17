@@ -53,10 +53,10 @@ class ReadMNIST(object):
         y_test = self.OneHot(y_test)
 
         # 复制训练数据和测试数据中的每个样本3遍
-        x_train = np.repeat(x_train, 3, axis=0)
-        y_train = np.repeat(y_train, 3, axis=0)
-        x_test = np.repeat(x_test, 3, axis=0)
-        y_test = np.repeat(y_test, 3, axis=0)
+        x_train = np.repeat(x_train, 3, axis=1)
+        y_train = np.repeat(y_train, 3, axis=1)
+        x_test = np.repeat(x_test, 3, axis=1)
+        y_test = np.repeat(y_test, 3, axis=1)
 
         data = (x_train, y_train), (x_test, y_test)
         return data
