@@ -1,9 +1,8 @@
 import math
 import numpy as np
-import matplotlib.pyplot as plt
+
 import h5py
 import scipy
-from PIL import Image
 import pandas as pd
 import tensorflow as tf
 import tensorflow.keras.layers as tfl
