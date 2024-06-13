@@ -21,6 +21,7 @@ class Model(object):
             self.parameters['W' + str(l)] = np.random.randn(self.layers_dims[l], self.layers_dims[l - 1]) * 0.01
             self.parameters['b' + str(l)] = np.zeros((self.layers_dims[l], 1))
 
+
     def compute_cost(self, AL, Y):
         m = Y.shape[1]
         cost = -1 / m * np.sum(Y * np.log(AL))
@@ -118,6 +119,8 @@ class Model(object):
         L = len(caches)
         m = AL.shape[1]
         Y = Y.reshape(AL.shape)
+        epsilon = 1e-10
+        AL = np.clip(AL, epsilon, 1 - epsilon)
         dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
         current_cache = caches[L - 1]
         dA_prev_temp, dW_temp, db_temp = self.linear_activation_backward(dAL, current_cache, "softmax")
@@ -152,6 +155,37 @@ class Model(object):
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
         return self.costs
 
+    def fit_ex(self, X, Y, learning_rate=0.01, num_iterations=3000, print_cost=False, Ifload=False):
+        if Ifload:
+            self.load_parameters('model_lab/model.pkl')
+
+        self.initialize_parameters()
+
+        for i in range(0, num_iterations):
+            AL, caches = self.L_model_forward(X)
+            cost = self.compute_cost(AL, Y)
+            self.costs.append(cost)
+            grads = self.L_model_backward(AL, Y, caches)
+            self.update_parameters(grads, learning_rate)
+            if print_cost:
+                print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
+            if print_cost and i % 200 == 0:
+                print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
+                # Perform model expansion every 100 iterations
+                self.expand_model()
+                print("success to expand")
+                for l in range(1, len(self.layers_dims)):
+                    print(f"W{l} shape: {self.parameters['W' + str(l)].shape}")
+                    print(f"b{l} shape: {self.parameters['b' + str(l)].shape}")
+
+        return self.costs
+
+    def expand_model(self):
+        expanded_parameters, new_layers_dims = self.expand_parameters()
+        self.parameters = expanded_parameters
+        self.layers_dims = new_layers_dims
+        # Reinitialize caches or any other necessary structures
+
     def predict_cost(self, X, Y):
         AL, caches = self.L_model_forward(X)
         cost = self.compute_cost(AL, Y)
@@ -175,3 +209,31 @@ class Model(object):
     def load_parameters(self, filename):
         with open(filename, 'rb') as file:
             self.parameters = pickle.load(file)
+
+    def expand_parameters(self):
+        new_parameters = {}
+        new_layers_dims = [dim * 2 for dim in self.layers_dims[:-1]] + [self.layers_dims[-1]]
+
+        # Expand the parameters for each layer
+        for l in range(1, len(self.layers_dims)):
+            original_weights = self.parameters['W' + str(l)]
+            original_biases = self.parameters['b' + str(l)]
+
+            if l == 1:
+                # First layer: expand only horizontally
+                new_weights = np.concatenate((original_weights, original_weights), axis=0)
+                new_biases = np.concatenate((original_biases, original_biases), axis=0)
+            elif l == len(self.layers_dims) - 1:
+                # Last layer: expand only vertically
+                new_weights = np.concatenate((original_weights, original_weights), axis=1)
+                new_biases = original_biases
+            else:
+                # Middle layers: expand horizontally and vertically
+                new_weights = np.concatenate((np.concatenate((original_weights, original_weights), axis=0),
+                                              np.concatenate((original_weights, original_weights), axis=0)), axis=1)
+                new_biases = np.concatenate((original_biases, original_biases), axis=0)
+
+            new_parameters['W' + str(l)] = new_weights
+            new_parameters['b' + str(l)] = new_biases
+
+        return new_parameters, new_layers_dims

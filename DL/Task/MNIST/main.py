@@ -2,7 +2,7 @@
 
 from DataReader import ReadMNIST
 import time
-
+import matplotlib.pyplot as plt
 from Regression import Model
 
 Data = ReadMNIST(train_images_filepath='Data/train-images.idx3-ubyte',
@@ -102,14 +102,14 @@ import csv
 
 # loading model
 t = time.time()
-layers_dims = [784, 256, 64, 10]
+layers_dims = [784, 16, 8, 10]
 model = Model(layers_dims)
-costs = model.fit(x_train, y_train, learning_rate=0.1, num_iterations=200, print_cost=True)
-# plt.plot(costs)
-# plt.xlabel('Iteration')
-# plt.ylabel('Cost')
-# plt.title('Cost reduction over iterations')
-# plt.show()
+costs = model.fit_ex(x_train, y_train, learning_rate=0.1, num_iterations=1000, print_cost=True)
+plt.plot(costs)
+plt.xlabel('Iteration')
+plt.ylabel('Cost')
+plt.title('Cost reduction over iterations')
+plt.show()
 model.save_parameters('model.pkl')
 print('Time taken: ', time.time() - t)
 print("test_accuracy", model.accuracy(x_test, y_test))
