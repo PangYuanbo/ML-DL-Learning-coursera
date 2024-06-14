@@ -169,7 +169,7 @@ class Model(object):
             self.update_parameters(grads, learning_rate)
             if print_cost:
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
-            if print_cost and i % 200 == 0:
+            if print_cost and i % 100 == 0 and i<400 and i!=0:
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
                 # Perform model expansion every 100 iterations
                 self.expand_model()
