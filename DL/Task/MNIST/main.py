@@ -102,9 +102,9 @@ import csv
 
 # loading model
 t = time.time()
-layers_dims = [784, 128, 64, 10]
+layers_dims = [784, 16, 8, 10]
 model = Model(layers_dims)
-costs = model.fit(x_train, y_train, learning_rate=0.1, num_iterations=900 , print_cost=True)
+costs = model.fit_ex(x_train, y_train, learning_rate=0.1, num_iterations=1000, print_cost=True)
 plt.plot(costs)
 plt.xlabel('Iteration')
 plt.ylabel('Cost')
